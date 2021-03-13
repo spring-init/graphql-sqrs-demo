@@ -1,0 +1,67 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'groovy'
+}
+
+group = 'mx.gps'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.5'
+    // implementation 'junit:junit:4.12'
+    compileOnly 'org.projectlombok:lombok'
+    compileOnly "org.codehaus.groovy:groovy-all:2.5.4"
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+    testCompile 'org.spockframework:spock-spring:1.3-groovy-2.5'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testCompile platform("org.spockframework:spock-bom:2.0-M1-groovy-2.5")
+
+    implementation 'io.r2dbc:r2dbc-h2:0.8.4.RELEASE'
+//    implementation 'com.h2database:h2:1.3.148'
+}
+
+test {
+    useJUnitPlatform() {
+        includeEngines 'junit-vintage'
+        includeEngines 'junit-jupiter'
+    }
+    //useJUnit {
+        // includeCategories 'mx.gps.graphqlsqpr.api.UnitTest'
+    //}
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [] // don't compile Java code twice
+        }
+        groovy {
+            srcDirs = [ 'src/main/groovy', 'src/main/java' ]
+        }
+    }
+}
