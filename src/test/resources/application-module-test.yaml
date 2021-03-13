@@ -1,0 +1,8 @@
+# spring.datasource.url=r2dbc:h2:file:~/test2;USER=sa;
+spring:
+  r2dbc:
+    url: r2dbc:h2:file://~/~/test
+
+  flyway:
+    url: jdbc:h2:file:~/test
+    enabled: true

@@ -1,0 +1,18 @@
+graphql:
+  spqr:
+    gui:
+      enabled: true
+spring:
+  r2dbc:
+    url: r2dbc:h2:file://~/~/testdb2
+    username: sa
+    password: password
+
+  flyway:
+    url: jdbc:h2:file:~/testdb2
+    user: sa
+    password: password
+    enabled: true
+    locations: classpath:db/migration
+
+
