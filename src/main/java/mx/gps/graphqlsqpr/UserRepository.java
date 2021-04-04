@@ -1,8 +1,7 @@
 package mx.gps.graphqlsqpr;
 
-import mx.gps.graphqlsqpr.domain.user.entities.User;
+import mx.gps.graphqlsqpr.user.domain.entities.User;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
