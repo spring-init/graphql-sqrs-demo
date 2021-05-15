@@ -11,23 +11,24 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import spock.lang.Specification
+import spock.lang.Stepwise
 
 @SpringBootTest
 @AutoConfigureWebTestClient
 @ActiveProfiles("module-test")
+@Stepwise
 class UserControllerCmpTest extends Specification {
     @Autowired
     private WebTestClient webClient
     @Autowired
     private UserRepository userRepository
+    private static String username
 
     def "get All users"() {
         System.err.println("ASDFASDF aSDFAS" + webClient)
         def user1 = new User(name: "Juan Penas")
         given:
         //userRepository.save(user1).block(Duration.of(1, ChronoUnit.SECONDS));
-        String username = "User1"
-
         when: 'get User info'
         def exchange = webClient.post().uri("/graphql")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -45,10 +46,11 @@ class UserControllerCmpTest extends Specification {
     def "create New User"() {
         given: 'new User'
         def user = new UserDTO(username: "User_" + System.currentTimeMillis() + "@mail.com")
+        username = user.username
         when: "call create new User"
         String request = """
             {\"query\": 
-                \"mutation {createUser (user: {username: \\"${user.username}\\"}) {id name}}\"
+                \"mutation {createUser (user: {username: \\"${username}\\"}) {id name}}\"
             }
         """
         println request
@@ -58,13 +60,32 @@ class UserControllerCmpTest extends Specification {
                 .exchange()
         then: 'new User is created'
         //User userResp =
-                exchange.expectStatus().isOk()
-//                .expectBody(Map)
-//                .returnResult().getResponseBody().data.createUser;
-//        println """ ${userResp.id} ${userResp.name} """
-//        Assertions.assertThat(userResp.id).isGreaterThan(0)
-
+        def exchangebody = exchange.expectStatus().isOk()
                 .expectBody()
-                .jsonPath('$.data.createUser.id').isNumber()
+        exchangebody.jsonPath('$.data.createUser.id').isNumber()
+        exchangebody.jsonPath('$.errors').doesNotExist()
+    }
+
+    def "delete User"() {
+        given: 'username'
+
+        when: "call delete User"
+        String request = """
+            {\"query\": 
+                \"mutation {deleteUser (user: {username: \\"${username}\\"})}\"
+            }
+        """
+        println request
+        def exchange = webClient.post().uri("/graphql")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(request))
+                .exchange()
+
+        then: 'User is delete'
+        def body = exchange.expectStatus().isOk()
+                .expectBody()
+        body
+                .jsonPath('$.data.deleteUser').isEqualTo("OK")
+            body    .jsonPath('$.errors').doesNotExist()
     }
 }
