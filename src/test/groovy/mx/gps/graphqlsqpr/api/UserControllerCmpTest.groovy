@@ -10,6 +10,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
 
@@ -22,7 +23,8 @@ class UserControllerCmpTest extends Specification {
     private WebTestClient webClient
     @Autowired
     private UserRepository userRepository
-    private static String username
+    @Shared
+    private String username
 
     def "get All users"() {
         System.err.println("ASDFASDF aSDFAS" + webClient)

@@ -16,3 +16,15 @@ spring:
     locations: classpath:db/migration
 
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuerUri: https://dev-6053964.okta.com/oauth2/default
+
+
+okta:
+  oauth2:
+    client-secret: AIew68aO_XNNYIcoaX-qm6hRPM_p-O2lm36r-316
+    client-id: 0oaqsdj57s80mcWr85d6
+    issuer: https://dev-6053964.okta.com/oauth2/default
