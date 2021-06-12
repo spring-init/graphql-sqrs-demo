@@ -52,6 +52,9 @@ test {
         includeEngines 'junit-vintage'
         includeEngines 'junit-jupiter'
     }
+    testLogging { // "standardOut",
+        events "passed", "skipped", "failed", "standardError"
+    }
     //useJUnit {
         // includeCategories 'mx.gps.graphqlsqpr.api.UnitTest'
     //}
