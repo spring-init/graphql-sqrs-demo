@@ -3,10 +3,12 @@ package mx.gps.graphqlsqpr.api
 import mx.gps.graphqlsqpr.UserRepository
 import mx.gps.graphqlsqpr.user.DTO.UserDTO
 import mx.gps.graphqlsqpr.user.domain.entities.User
+import org.assertj.core.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -19,7 +21,7 @@ import spock.lang.Stepwise
 @AutoConfigureWebTestClient
 @ActiveProfiles("module-test")
 @Stepwise
-@WithMockUser
+@WithMockUser(authorities = ['MASTER'])
 class UserControllerCmpTest extends Specification {
     @Autowired
     private WebTestClient webClient
@@ -29,7 +31,6 @@ class UserControllerCmpTest extends Specification {
     private String username
 
     def "get All users"() {
-        System.err.println("ASDFASDF aSDFAS" + webClient)
         def user1 = new User(name: "Juan Penas")
         given:
         //userRepository.save(user1).block(Duration.of(1, ChronoUnit.SECONDS));
@@ -41,10 +42,12 @@ class UserControllerCmpTest extends Specification {
                 .exchange()
         then:
         exchange.expectStatus().isOk()
-                .expectBody()
-                .jsonPath('$.data').exists()
-        /** .findAll().forEach { user ->
-         Assertions.assertThat user isNot null};*/
+                .expectBody(Map)
+                .consumeWith {
+                    List users = it.getResponseBody().data.user
+                    Assertions.assertThat(users).isNotEmpty()
+                    users.forEach { Assertions.assertThat(it.id).isGreaterThan(0) }
+                }
     }
 
     def "create New User"() {
@@ -70,6 +73,7 @@ class UserControllerCmpTest extends Specification {
         exchangebody.jsonPath('$.errors').doesNotExist()
     }
 
+    @WithMockUser(authorities = ['ROOT'])
     def "delete User"() {
         given: 'username'
 

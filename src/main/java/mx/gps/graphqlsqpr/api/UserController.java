@@ -12,6 +12,8 @@ import mx.gps.graphqlsqpr.user.domain.service.UserService;
 import mx.gps.graphqlsqpr.user.DTO.UserDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import reactor.core.publisher.Flux;
@@ -20,6 +22,8 @@ import reactor.core.publisher.Mono;
 @GraphQLApi
 @Component
 @RequiredArgsConstructor
+@PreAuthorize("hasAuthority('MASTER')")
+//@PreAuthorize("isAuthent  icated()")
 public class UserController {
 
     private final UserService userService;
@@ -33,6 +37,9 @@ public class UserController {
 
     @GraphQLQuery(name = "user")
     public Flux<User> getAllUsers() {
+//        System.err.println("PPDG" + ReactiveSecurityContextHolder.getContext()
+//                .block().getAuthentication().getPrincipal());
+        System.err.println("A JIJO");
         return userService.getAllUser(PageRequest.of(0,20));
     }
 
@@ -48,6 +55,7 @@ public class UserController {
     }
 
     @GraphQLMutation(name = "deleteUser")
+   // @PreAuthorize("hasAuthority('ROOT')")
     public Mono<String> deleteUser(@GraphQLArgument(name = "user")UserDTO userDTO) {
         return deleteUserUC.deleteUser(userDTO.getUsername())
                 .doOnNext(v ->

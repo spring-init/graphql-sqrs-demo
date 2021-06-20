@@ -41,8 +41,8 @@ public class SecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http.authorizeExchange()
-                .pathMatchers(HttpMethod.POST, "/kayaks/**")
-                .hasAuthority("Admin")
+//                .pathMatchers(HttpMethod.POST, "/kayaks/**")
+//                .hasAuthority("Admin")
                 .anyExchange().authenticated()
                 .and().csrf().disable()
                 .oauth2ResourceServer().jwt();
@@ -64,53 +64,33 @@ public class SecurityConfiguration {
         return new CorsWebFilter(source);
     }
 
-    @Bean
-    public RouterFunction<ServerResponse> route(MyRestHandler handler){
-        return RouterFunctions
-                .route(
-                        GET("/getToken")
-                                .and(accept(MediaType.ALL)), handler::getToken);
-    }
-
-    @Component
-    public class MyRestHandler {
-        public Mono<ServerResponse> getToken(ServerRequest serverRequest) {
-            return ServerResponse.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(getTokenP(serverRequest), String.class);
-        }
-
-        private Mono<String> getTokenP(ServerRequest serverRequest) {
-            return extractOAuth2AuthorizedClient(serverRequest)
-                    .map(client -> "token: " + client.getAccessToken().getTokenValue());
-        }
-    }
-
-    @Autowired
-//    @Lazy
-//    private OAuth2AuthorizedClientService clientService;
-    private ServerOAuth2AuthorizedClientRepository authorizedClientRepository;
-
-    public Mono<OAuth2AuthorizedClient> extractOAuth2AuthorizedClient(ServerRequest request) {
-        return request.principal()
-                .filter(principal -> principal instanceof OAuth2AuthenticationToken)
-                .cast(OAuth2AuthenticationToken.class)
-                .flatMap(auth -> authorizedClientRepository.loadAuthorizedClient(auth.getAuthorizedClientRegistrationId(), auth, request.exchange()));
-    }
-
-
-
 //    @Bean
-//    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository repository) {
-//
-//        return new InMemoryOAuth2AuthorizedClientService(
-//                repository);
+//    public RouterFunction<ServerResponse> route(MyRestHandler handler){
+//        return RouterFunctions
+//                .route(
+//                        GET("/getToken")
+//                                .and(accept(MediaType.ALL)), handler::getToken);
 //    }
+
+//    @Component
+//    public class MyRestHandler {
+//        public Mono<ServerResponse> getToken(ServerRequest serverRequest) {
+//            return ServerResponse.ok()
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .body(getTokenP(serverRequest), String.class);
+//        }
 //
-//    @Bean
-//    public ClientRegistrationRepository clientRegistrationRepository() {
-//        List<ClientRegistration> registrations = Collections.emptyList();
+//        private Mono<String> getTokenP(ServerRequest serverRequest) {
+//            return extractOAuth2AuthorizedClient(serverRequest)
+//                    .map(client -> "token: " + client.getAccessToken().getTokenValue());
+//        }
+//    }
+//    private ServerOAuth2AuthorizedClientRepository authorizedClientRepository;
 //
-//        return new InMemoryClientRegistrationRepository(registrations);
+//    public Mono<OAuth2AuthorizedClient> extractOAuth2AuthorizedClient(ServerRequest request) {
+//        return request.principal()
+//                .filter(principal -> principal instanceof OAuth2AuthenticationToken)
+//                .cast(OAuth2AuthenticationToken.class)
+//                .flatMap(auth -> authorizedClientRepository.loadAuthorizedClient(auth.getAuthorizedClientRegistrationId(), auth, request.exchange()));
 //    }
 }
