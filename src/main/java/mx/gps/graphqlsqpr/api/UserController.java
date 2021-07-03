@@ -40,26 +40,26 @@ public class UserController {
 //        System.err.println("PPDG" + ReactiveSecurityContextHolder.getContext()
 //                .block().getAuthentication().getPrincipal());
         System.err.println("A JIJO");
-        return userService.getAllUser(PageRequest.of(0,20));
+        return userService.getAllUser(PageRequest.of(0, 20));
     }
 
 
     @GraphQLMutation(name = "createUser")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<User> createUser(@GraphQLArgument(name = "user")UserDTO userDTO) {
+    public Mono<User> createUser(@GraphQLArgument(name = "user") UserDTO userDTO) {
         return createUserUC.createUser(userDTO)
-                .map( user -> {
+                .map(user -> {
                     System.out.println(user);
                     return user;
                 });
     }
 
     @GraphQLMutation(name = "deleteUser")
-   // @PreAuthorize("hasAuthority('ROOT')")
-    public Mono<String> deleteUser(@GraphQLArgument(name = "user")UserDTO userDTO) {
+    @PreAuthorize("hasAuthority('ROOT')")
+    public Mono<String> deleteUser(@GraphQLArgument(name = "user") UserDTO userDTO) {
         return deleteUserUC.deleteUser(userDTO.getUsername())
                 .doOnNext(v ->
                         System.err.println("CONTOLLER DELTE " + v)
-            );
+                );
     }
 }

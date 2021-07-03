@@ -19,7 +19,7 @@ class GraphqlSqprApplicationSampleRequestTest {
     private WebTestClient webClient;
 
     @Test
-    @WithMockUser(authorities = {"ADMIN"})
+    @WithMockUser(authorities = {"MASTER"})
     void sample() {
         String expectedResponse = "{\"data\":{\"sample\":\"foodRepository.findAll()\"}}";
         webClient.post().uri("/graphql")
