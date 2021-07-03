@@ -1,37 +1,30 @@
 package mx.gps.graphqlsqpr.config;
 
-import com.nimbusds.oauth2.sdk.TokenIntrospectionResponse;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import graphql.com.google.common.base.Function;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.introspection.*;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import reactor.core.publisher.Mono;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -113,7 +106,12 @@ public class SecurityConfiguration {
 }
 
     @Bean
-        public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+        public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws NoSuchFieldException {
+        //FIXME: UGLY HACK OKTA Support for OpaqueToken
+        Field jwtField = ServerHttpSecurity.OAuth2ResourceServerSpec.class.getDeclaredField("jwt");
+        jwtField.setAccessible(true);
+        ReflectionUtils.setField(jwtField, http.oauth2ResourceServer(), null);
+
         http.authorizeExchange()
 //                .pathMatchers(HttpMethod.POST, "/kayaks/**")
 //                .hasAuthority("Admin")
