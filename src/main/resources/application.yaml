@@ -19,9 +19,13 @@ spring:
   security:
     oauth2:
       resourceserver:
-        jwt:
-          issuerUri: https://dev-6053964.okta.com/oauth2/default
-          jwk-set-uri: https://dev-6053964.okta.com/oauth2/default/v1/keys
+#        jwt:
+#          issuerUri: https://dev-6053964.okta.com/oauth2/default
+#          jwk-set-uri: https://dev-6053964.okta.com/oauth2/default/v1/keys
+        opaquetoken:
+          introspection-uri: https://dev-6053964.okta.com/oauth2/default/v1/introspect
+          client-secret: AIew68aO_XNNYIcoaX-qm6hRPM_p-O2lm36r-316
+          client-id: 0oaqsdj57s80mcWr85d6
 
 
 okta:
@@ -30,4 +34,8 @@ okta:
     client-id: 0oaqsdj57s80mcWr85d6
     issuer: https://dev-6053964.okta.com/oauth2/default
     groups-claim: roles
+
+
+
+
 

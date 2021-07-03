@@ -6,3 +6,10 @@ spring:
   flyway:
     url: jdbc:h2:file:~/test
     enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: DEBUG

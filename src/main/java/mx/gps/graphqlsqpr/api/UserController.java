@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @GraphQLMutation(name = "deleteUser")
-   // @PreAuthorize("hasAuthority('ROOT')")
+    @PreAuthorize("hasAuthority('ROOT')")
     public Mono<String> deleteUser(@GraphQLArgument(name = "user")UserDTO userDTO) {
         return deleteUserUC.deleteUser(userDTO.getUsername())
                 .doOnNext(v ->
